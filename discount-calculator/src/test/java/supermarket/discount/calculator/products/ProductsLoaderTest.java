@@ -15,4 +15,10 @@ public class ProductsLoaderTest
         Assert.assertEquals("Coke", product.getName());
         Assert.assertEquals(Category.SOFT_DRINK, product.getCategory());
     }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testMissingProperty() {
+        ProductsLoader pl = new ProductsLoader("src/test/resources/PercentileDiscountPromotionTest/products.prod");
+        pl.getProduct("Pepsi");
+    }
 }
