@@ -1,0 +1,3 @@
+#name,category,pricePerUnit,soldWholeUnit
+Coke,SOFT_DRINK,1.5,true
+Pepsi,SOFT_DRINK,1.5,true
