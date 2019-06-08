@@ -6,7 +6,7 @@ public class ShoppingCartItemIdGen
 {
     private static final AtomicLong ID = new AtomicLong();
     
-    public long nextId() {
+    public static long nextId() {
         return ID.incrementAndGet();
     }
 }
