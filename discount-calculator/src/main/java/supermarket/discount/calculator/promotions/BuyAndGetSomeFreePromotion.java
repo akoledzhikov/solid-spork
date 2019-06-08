@@ -45,13 +45,13 @@ public class BuyAndGetSomeFreePromotion
         return result;
     }
 
-    private int originalAmount;
+    private final int originalAmount;
 
-    private Product product;
+    private final Product product;
 
-    private Category category;
+    private final Category category;
 
-    private int newAmount;
+    private final int newAmount;
 
 
     private BuyAndGetSomeFreePromotion(int originalAmount, Product product, Category category, int newAmount)

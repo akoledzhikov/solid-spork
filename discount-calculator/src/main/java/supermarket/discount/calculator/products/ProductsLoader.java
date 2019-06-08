@@ -4,6 +4,7 @@ package supermarket.discount.calculator.products;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,6 +57,7 @@ public class ProductsLoader
             Map<String, Product> result = stream.filter(line -> !line.startsWith("#"))
                                                 .map(ProductFactory::productFromString)
                                                 .collect(Collectors.toMap(x -> x.getName(), x -> x));
+            result = Collections.unmodifiableMap(result);
             return result;
         }
         catch (IOException e)

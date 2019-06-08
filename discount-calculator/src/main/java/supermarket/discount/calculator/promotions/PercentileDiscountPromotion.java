@@ -55,11 +55,11 @@ public class PercentileDiscountPromotion
         }
     }
 
-    private Product product;
+    private final Product product;
 
-    private Category category;
+    private final Category category;
 
-    private int discountPercent;
+    private final int discountPercent;
 
 
     public PercentileDiscountPromotion(Product product, Category category, int discountPercent)

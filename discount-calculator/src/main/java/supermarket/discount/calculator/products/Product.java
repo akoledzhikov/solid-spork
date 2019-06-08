@@ -6,18 +6,21 @@ import java.math.BigDecimal;
 
 public class Product
 {
+    private static final ProductsLoader pl = new ProductsLoader();
+
+
     public static Product fromString(String productAsString)
     {
-        return null;
+        return pl.getProduct(productAsString);
     }
 
-    private String name;
+    private final String name;
 
-    private Category category;
+    private final Category category;
 
-    private BigDecimal pricePerUnit;
+    private final BigDecimal pricePerUnit;
 
-    private boolean soldWholeUnit = true;
+    private final boolean soldWholeUnit;
 
 
     public Product(String name, Category category, BigDecimal pricePerUnit, boolean soldWholeUnit)

@@ -4,6 +4,7 @@ package supermarket.discount.calculator.promotions.loader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,9 +19,16 @@ import supermarket.discount.calculator.promotions.Promotion;
  */
 public class PromotionsLoader
 {
-    private String promotionsFileLocation;
+    private final String promotionsFileLocation;
 
     private Set<Promotion> promotions;
+
+
+    public PromotionsLoader(String promotionsFileLocation)
+    {
+        super();
+        this.promotionsFileLocation = promotionsFileLocation;
+    }
 
 
     public Set<Promotion> getPromotions()
@@ -47,6 +55,7 @@ public class PromotionsLoader
             Set<Promotion> result = stream.filter(line -> !line.startsWith("#"))
                                           .map(PromotionFactory::promotionFromString)
                                           .collect(Collectors.toSet());
+            result = Collections.unmodifiableSet(result);
             return result;
         }
         catch (IOException e)
