@@ -41,12 +41,15 @@ public class PromotionMatcher
 
     private List<PromotionMatch> filterOutCollidingPromotions(List<PromotionMatch> possibleMatches)
     {
-        List<PromotionGroup> allCombinations = generateAllCombinations(possibleMatches);
-        Collections.sort(allCombinations);
-        for (PromotionGroup group : allCombinations)
+        List<PromotionCombination> allCombinations = generateAllCombinations(possibleMatches);
+        Collections.sort(allCombinations, Collections.reverseOrder());
+        for (PromotionCombination group : allCombinations)
         {
             if (!isItemUsedMoreThanOnce(group))
             {
+                // the promotion combination that saves the customer the most money
+                // and does not include an item participating in 2 promotions at the
+                // same time is the one we want.
                 return group.promotions;
             }
         }
@@ -55,21 +58,48 @@ public class PromotionMatcher
     }
 
 
-    private boolean isItemUsedMoreThanOnce(PromotionGroup group)
+    private boolean isItemUsedMoreThanOnce(PromotionCombination group)
     {
         Set<ShoppingCartItem> usedItems = new HashSet<>();
+        for (PromotionMatch match : group.promotions)
+        {
+            for (ShoppingCartItem item : match.getItems())
+            {
+                if (!usedItems.add(item))
+                {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
-
-    private List<PromotionGroup> generateAllCombinations(List<PromotionMatch> possibleMatches)
+    /**
+     * Generates all possible combinations of promotions.
+     * For example, if you have promotions 1,2 and 3, this method will generate:
+     * [1], [1,2], [1,2,3], [2], [2,3], [3]
+     * @param possibleMatches
+     * @return
+     */
+    private List<PromotionCombination> generateAllCombinations(List<PromotionMatch> possibleMatches)
     {
-        // TODO Auto-generated method stub
-        return null;
+        PromotionMatch[] matchesAsArray = new PromotionMatch[possibleMatches.size()];
+        matchesAsArray = possibleMatches.toArray(matchesAsArray);
+        List<PromotionCombination> result = new ArrayList<>();
+        for (int i = 0; i < matchesAsArray.length; i++) {
+            List<PromotionMatch> current = new ArrayList<>();
+            for (int j = i; j < matchesAsArray.length; j++) {
+                current.add(matchesAsArray[j]);
+                result.add(new PromotionCombination(new ArrayList<>(current)));
+            }
+        }
+        
+        return result;
     }
 
-    private static final class PromotionGroup
-        implements Comparable<PromotionGroup>
+    private static final class PromotionCombination
+        implements Comparable<PromotionCombination>
     {
 
         private final List<PromotionMatch> promotions;
@@ -77,7 +107,7 @@ public class PromotionMatcher
         private final BigDecimal totalMoneySaved;
 
 
-        private PromotionGroup(List<PromotionMatch> promotions)
+        private PromotionCombination(List<PromotionMatch> promotions)
         {
             super();
             this.promotions = promotions;
@@ -88,7 +118,7 @@ public class PromotionMatcher
 
 
         @Override
-        public int compareTo(PromotionGroup o)
+        public int compareTo(PromotionCombination o)
         {
             return totalMoneySaved.compareTo(o.totalMoneySaved);
         }
