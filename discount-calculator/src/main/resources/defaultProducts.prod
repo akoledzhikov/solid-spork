@@ -1,3 +1,5 @@
 #name,category,pricePerUnit,soldWholeUnit
 Coke,SOFT_DRINK,1.5,true
 Pepsi,SOFT_DRINK,1.5,true
+Ham Sandwich, SNACK, 3, true
+Oranges, GROCERY, 5, false

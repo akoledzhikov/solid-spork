@@ -5,12 +5,10 @@ import java.math.BigDecimal;
 
 import org.apache.log4j.Logger;
 
-import supermarket.discount.calculator.promotions.BuyAndGetSomeFreePromotion;
-
 
 public class ProductFactory
 {
-    private static final Logger LOG = Logger.getLogger(BuyAndGetSomeFreePromotion.class);
+    private static final Logger LOG = Logger.getLogger(ProductFactory.class);
 
 
     // TODO - bad! Cannot be mocked to unit test ProductLoader. Sad :(
@@ -25,10 +23,10 @@ public class ProductFactory
             throw new IllegalArgumentException("Malformed product definition: " + productAsString);
         }
 
-        String name = split[0];
-        Category category = Category.valueOf(split[1]);
-        BigDecimal pricePerUnit = new BigDecimal(split[2]);
-        boolean soldWholeUnit = Boolean.valueOf(split[3]);
+        String name = split[0].trim();
+        Category category = Category.valueOf(split[1].trim());
+        BigDecimal pricePerUnit = new BigDecimal(split[2].trim());
+        boolean soldWholeUnit = Boolean.valueOf(split[3].trim());
 
         Product result = new Product(name, category, pricePerUnit, soldWholeUnit);
         LOG.debug("result : " + productAsString);

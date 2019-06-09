@@ -21,31 +21,33 @@ public class ShoppingCartParser
     private static final ProductsLoader pl = new ProductsLoader();
 
 
-    public List<ShoppingCartItem> parse(List<String> cartAsStrings)
+    public static List<ShoppingCartItem> parse(List<String> cartAsStrings)
     {
         LOG.debug("Parsing : " + String.join(",", cartAsStrings));
         List<ShoppingCartItem> result = new ArrayList<>(cartAsStrings.size());
         for (String itemAsString : cartAsStrings)
         {
-            String split[] = itemAsString.split("\\s");
-            if (split.length != 2)
-            {
-                throw new IllegalArgumentException("Malformed shopping cart item: " + itemAsString);
-            }
+            int idxLastSpace = itemAsString.lastIndexOf(" ");
+            String productAsString = itemAsString.substring(0, idxLastSpace).trim();
+            String unitsAsString = itemAsString.substring(idxLastSpace).trim();
 
-            Product product = pl.getProduct(split[0]);
+            Product product = pl.getProduct(productAsString);
             if (product == null)
             {
                 throw new IllegalArgumentException("Unknown product: " + product);
             }
 
             // of course, we are not going to round in customer's favor.
-            BigDecimal units = new BigDecimal(split[1]).setScale(2, RoundingMode.UP);
+            BigDecimal units = new BigDecimal(unitsAsString).setScale(2, RoundingMode.UP);
+            if (product.isSoldWholeUnit() && units.stripTrailingZeros().scale() > 0) {
+                throw new IllegalArgumentException(product.getName() + " is sold only in whole units");
+            }
+            
             long id = ShoppingCartItemIdGen.nextId();
             ShoppingCartItem item = new ShoppingCartItem(id, product, units);
             result.add(item);
         }
-        
+
         return Collections.unmodifiableList(result);
     }
 }
