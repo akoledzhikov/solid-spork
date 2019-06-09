@@ -8,8 +8,10 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import supermarket.discount.calculator.cart.ShoppingCartItem;
 import supermarket.discount.calculator.products.Category;
 import supermarket.discount.calculator.products.Product;
+import supermarket.discount.calculator.promotions.matcher.PromotionMatch;
 
 
 public class PercentileDiscountPromotion
@@ -90,7 +92,7 @@ public class PercentileDiscountPromotion
 
 
     @Override
-    public BigDecimal applyPromotion(List theBasketList)
+    public List<PromotionMatch> applyPromotion(List<ShoppingCartItem> cart)
     {
         return null;
     }

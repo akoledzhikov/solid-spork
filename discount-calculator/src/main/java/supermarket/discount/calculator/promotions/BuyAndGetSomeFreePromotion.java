@@ -8,8 +8,10 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import supermarket.discount.calculator.cart.ShoppingCartItem;
 import supermarket.discount.calculator.products.Category;
 import supermarket.discount.calculator.products.Product;
+import supermarket.discount.calculator.promotions.matcher.PromotionMatch;
 
 
 public class BuyAndGetSomeFreePromotion
@@ -89,7 +91,7 @@ public class BuyAndGetSomeFreePromotion
 
 
     @Override
-    public BigDecimal applyPromotion(List theBasketList)
+    public List<PromotionMatch> applyPromotion(List<ShoppingCartItem> cart)
     {
         return null;
     }
@@ -140,19 +142,5 @@ public class BuyAndGetSomeFreePromotion
         else if (!product.equals(other.product))
             return false;
         return true;
-    }
-
-
-    public static void main(String[] args)
-    {
-        Pattern p = Pattern.compile(PATTERN);
-        Matcher matcher = p.matcher("2 @Coke@ for the price of 1");
-        System.out.println(matcher.matches());
-        System.out.println(matcher.group("originalAmount"));
-        // System.out.println(matcher.group(2));
-        System.out.println(matcher.group("product"));
-        System.out.println(matcher.group("category"));
-        System.out.println(matcher.group("newAmount"));
-        fromString("2 @Coke@ for the price of 1");
     }
 }

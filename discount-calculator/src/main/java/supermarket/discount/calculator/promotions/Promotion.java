@@ -1,11 +1,13 @@
 package supermarket.discount.calculator.promotions;
 
 
-import java.math.BigDecimal;
 import java.util.List;
+
+import supermarket.discount.calculator.cart.ShoppingCartItem;
+import supermarket.discount.calculator.promotions.matcher.PromotionMatch;
 
 
 public interface Promotion
 {
-    public BigDecimal applyPromotion(List theBasketList);
+    public List<PromotionMatch> applyPromotion(List<ShoppingCartItem> cart);
 }

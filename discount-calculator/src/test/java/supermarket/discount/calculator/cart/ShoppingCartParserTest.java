@@ -21,6 +21,7 @@ public class ShoppingCartParserTest
     public void testSuccessfulParse()
         throws IOException
     {
+        // TODO lots of code duplication (the 1st 2 lines - extract to method).
         List<String> cartAsString = fileToList("src/test/resources/ShoppingCartParserTest/validShoppingCart.cart");
         List<ShoppingCartItem> items = ShoppingCartParser.parse(cartAsString);
         Assert.assertEquals(3, items.size());
