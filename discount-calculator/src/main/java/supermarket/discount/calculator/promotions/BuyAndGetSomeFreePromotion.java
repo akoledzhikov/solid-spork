@@ -2,9 +2,13 @@ package supermarket.discount.calculator.promotions;
 
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -12,6 +16,8 @@ import supermarket.discount.calculator.cart.ShoppingCartItem;
 import supermarket.discount.calculator.products.Category;
 import supermarket.discount.calculator.products.Product;
 import supermarket.discount.calculator.promotions.matcher.PromotionMatch;
+
+import com.google.common.collect.Sets;
 
 
 public class BuyAndGetSomeFreePromotion
@@ -39,12 +45,27 @@ public class BuyAndGetSomeFreePromotion
         Product product = Product.fromString(m.group("product"));
         Category category = Category.fromString(m.group("category"));
         int newAmount = Integer.valueOf(m.group("newAmount"));
+        validateAmounts(originalAmount, newAmount);
         BuyAndGetSomeFreePromotion result = new BuyAndGetSomeFreePromotion(originalAmount,
                                                                            product,
                                                                            category,
                                                                            newAmount);
         LOG.debug("Result : " + result);
         return result;
+    }
+
+
+    private static void validateAmounts(int originalAmount, int newAmount)
+    {
+        if (newAmount > originalAmount)
+        {
+            throw new IllegalArgumentException("New amount is less than original amount");
+        }
+    }
+    
+    // TODO looks handy, might be extracted in a separate class for other promotions to be used.
+    private static int compareItems(ShoppingCartItem item1, ShoppingCartItem item2) {
+        return item1.getCost().compareTo(item2.getCost());
     }
 
     private final int originalAmount;
@@ -93,7 +114,35 @@ public class BuyAndGetSomeFreePromotion
     @Override
     public List<PromotionMatch> applyPromotion(List<ShoppingCartItem> cart)
     {
-        return null;
+        // get all items that are part of this promotion - for example, Cokes or SOFT_DRINKs
+        Set<ShoppingCartItem> applicableItems = cart.stream()
+                                                    .filter(item -> item.getProduct().equals(product)
+                                                                    || item.getProduct()
+                                                                           .getCategory()
+                                                                           .equals(category))
+                                                    .collect(Collectors.toSet());
+        // generate all combinations of those items of order X = originalAmount
+        Set<Set<ShoppingCartItem>> combinations = Sets.combinations(applicableItems, originalAmount);
+        List<PromotionMatch> result = combinations.stream()
+                                                  .map(this::createMatch)
+                                                  .collect(Collectors.toList());
+        return result;
+    }
+
+
+    private PromotionMatch createMatch(Set<ShoppingCartItem> combination)
+    {
+        // for each combination, the customer gets the cheapest Y = newAmount items for free.
+        // This is the money saved value of the promotion.
+        // The free items cannot be used in other promotions
+        List<ShoppingCartItem> items = new ArrayList<ShoppingCartItem>(combination);
+        items.sort(BuyAndGetSomeFreePromotion::compareItems);
+        BigDecimal moneySaved = BigDecimal.ZERO;
+        for (int i = 0; i < newAmount; i++) {
+            moneySaved = moneySaved.add(items.get(i).getCost());
+        }
+        
+        return new PromotionMatch(this, moneySaved, items);
     }
 
 

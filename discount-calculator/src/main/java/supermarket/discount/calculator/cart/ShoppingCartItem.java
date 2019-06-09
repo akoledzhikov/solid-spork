@@ -40,6 +40,10 @@ public class ShoppingCartItem
     {
         return units;
     }
+    
+    public BigDecimal getCost() {
+        return units.multiply(product.getPricePerUnit());
+    }
 
 
     @Override

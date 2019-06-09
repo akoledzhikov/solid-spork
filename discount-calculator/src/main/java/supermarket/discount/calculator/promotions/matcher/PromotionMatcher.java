@@ -29,16 +29,19 @@ public class PromotionMatcher
     {
         Set<Promotion> promotions = promoLoader.getPromotions();
         List<PromotionMatch> possibleMatches = new ArrayList<>();
+        // for each active promotion - get all possible combinations of items applicable for that promotion
         for (Promotion p : promotions)
         {
             possibleMatches.addAll(p.applyPromotion(cart));
         }
 
+        // remove promotions that use the same items twice or more.
         List<PromotionMatch> result = filterOutCollidingPromotions(possibleMatches);
         return result;
     }
 
-
+    // TODO method name is deceptive - it removes collisions, but also selects the best promotion. Second part
+    // should be extracted to separate method. If not possible, rename it.
     private List<PromotionMatch> filterOutCollidingPromotions(List<PromotionMatch> possibleMatches)
     {
         List<PromotionCombination> allCombinations = generateAllCombinations(possibleMatches);
@@ -75,10 +78,11 @@ public class PromotionMatcher
         return false;
     }
 
+
     /**
-     * Generates all possible combinations of promotions.
-     * For example, if you have promotions 1,2 and 3, this method will generate:
-     * [1], [1,2], [1,2,3], [2], [2,3], [3]
+     * Generates all possible combinations of promotions. For example, if you have promotions 1,2 and 3, this
+     * method will generate: [1], [1,2], [1,2,3], [2], [2,3], [3]
+     * 
      * @param possibleMatches
      * @return
      */
@@ -87,14 +91,16 @@ public class PromotionMatcher
         PromotionMatch[] matchesAsArray = new PromotionMatch[possibleMatches.size()];
         matchesAsArray = possibleMatches.toArray(matchesAsArray);
         List<PromotionCombination> result = new ArrayList<>();
-        for (int i = 0; i < matchesAsArray.length; i++) {
+        for (int i = 0; i < matchesAsArray.length; i++)
+        {
             List<PromotionMatch> current = new ArrayList<>();
-            for (int j = i; j < matchesAsArray.length; j++) {
+            for (int j = i; j < matchesAsArray.length; j++)
+            {
                 current.add(matchesAsArray[j]);
                 result.add(new PromotionCombination(new ArrayList<>(current)));
             }
         }
-        
+
         return result;
     }
 
