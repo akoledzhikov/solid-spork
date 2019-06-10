@@ -2,9 +2,11 @@ package supermarket.discount.calculator.promotions;
 
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -39,7 +41,7 @@ public class PercentileDiscountPromotion
         m.matches();
         Product product = Product.fromString(m.group("product"));
         Category category = Category.fromString(m.group("category"));
-        int discountPercent = Integer.valueOf(m.group("discount"));
+        BigDecimal discountPercent = new BigDecimal(m.group("discount"));
         validateDiscountPercent(discountPercent);
         PercentileDiscountPromotion result = new PercentileDiscountPromotion(product,
                                                                              category,
@@ -49,9 +51,9 @@ public class PercentileDiscountPromotion
     }
 
 
-    private static void validateDiscountPercent(int discountPercent)
+    private static void validateDiscountPercent(BigDecimal discountPercent)
     {
-        if (discountPercent >= 100)
+        if (discountPercent.intValueExact() >= 100)
         {
             throw new IllegalArgumentException("Discount cannot be 100% or more!");
         }
@@ -61,10 +63,10 @@ public class PercentileDiscountPromotion
 
     private final Category category;
 
-    private final int discountPercent;
+    private final BigDecimal discountPercent;
 
 
-    public PercentileDiscountPromotion(Product product, Category category, int discountPercent)
+    public PercentileDiscountPromotion(Product product, Category category, BigDecimal discountPercent)
     {
         super();
         this.product = product;
@@ -85,7 +87,7 @@ public class PercentileDiscountPromotion
     }
 
 
-    public int getDiscountPercent()
+    public BigDecimal getDiscountPercent()
     {
         return discountPercent;
     }
@@ -94,15 +96,21 @@ public class PercentileDiscountPromotion
     @Override
     public List<PromotionMatch> applyPromotion(List<ShoppingCartItem> cart)
     {
-        return null;
+        // get all items that are part of this promotion - for example, Cokes or SOFT_DRINKs
+        List<PromotionMatch> result = cart.stream()
+                                          .filter(item -> item.getProduct().equals(product)
+                                                          || item.getProduct().getCategory().equals(category))
+                                          .map(this::toMatch)
+                                          .collect(Collectors.toList());
+
+        return result;
     }
 
 
-    @Override
-    public String toString()
+    private PromotionMatch toMatch(ShoppingCartItem item)
     {
-        return "PercentileDiscountPromotion [product=" + product + ", category=" + category
-               + ", discountPercent=" + discountPercent + "]";
+        BigDecimal moneySaved = item.getCost().multiply(discountPercent);
+        return new PromotionMatch(this, moneySaved, Collections.singletonList(item));
     }
 
 
@@ -112,7 +120,7 @@ public class PercentileDiscountPromotion
         final int prime = 31;
         int result = 1;
         result = prime * result + ((category == null) ? 0 : category.hashCode());
-        result = prime * result + discountPercent;
+        result = prime * result + ((discountPercent == null) ? 0 : discountPercent.hashCode());
         result = prime * result + ((product == null) ? 0 : product.hashCode());
         return result;
     }
@@ -130,7 +138,12 @@ public class PercentileDiscountPromotion
         PercentileDiscountPromotion other = (PercentileDiscountPromotion)obj;
         if (category != other.category)
             return false;
-        if (discountPercent != other.discountPercent)
+        if (discountPercent == null)
+        {
+            if (other.discountPercent != null)
+                return false;
+        }
+        else if (!discountPercent.equals(other.discountPercent))
             return false;
         if (product == null)
         {
@@ -140,5 +153,13 @@ public class PercentileDiscountPromotion
         else if (!product.equals(other.product))
             return false;
         return true;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return "PercentileDiscountPromotion [product=" + product + ", category=" + category
+               + ", discountPercent=" + discountPercent + "]";
     }
 }

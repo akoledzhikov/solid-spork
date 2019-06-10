@@ -42,4 +42,12 @@ public class PromotionMatch
     {
         return items;
     }
+
+
+    @Override
+    public String toString()
+    {
+        return "PromotionMatch [promotion=" + promotion + ", moneySaved=" + moneySaved + ", items=" + items
+               + "]";
+    }
 }

@@ -40,8 +40,10 @@ public class ShoppingCartItem
     {
         return units;
     }
-    
-    public BigDecimal getCost() {
+
+
+    public BigDecimal getCost()
+    {
         return units.multiply(product.getPricePerUnit());
     }
 
@@ -69,5 +71,12 @@ public class ShoppingCartItem
         if (id != other.id)
             return false;
         return true;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return "ShoppingCartItem [id=" + id + ", product=" + product + ", units=" + units + "]";
     }
 }

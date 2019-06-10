@@ -57,7 +57,7 @@ public class PromotionMatcher
             }
         }
 
-        throw new IllegalStateException("There should be at least 1 combination of promotions where an item is not used twice");
+        return Collections.emptyList();
     }
 
 

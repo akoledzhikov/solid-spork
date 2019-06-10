@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import supermarket.discount.calculator.promotions.BuyAndGetSomeFreePromotion;
+import supermarket.discount.calculator.promotions.PercentileDiscountPromotion;
 import supermarket.discount.calculator.promotions.Promotion;
 
 
@@ -17,8 +18,13 @@ class PromotionFactory
 
     static
     {
+        // TODO maybe some reflection-based magic to introspect the classpath and find 
+        // implementations of the Promotion interface or stuff annotated with
+        // @Promotion?
         PATTERN_TO_PROMOTION.put(BuyAndGetSomeFreePromotion.getPattern(),
                                  BuyAndGetSomeFreePromotion::fromString);
+        PATTERN_TO_PROMOTION.put(PercentileDiscountPromotion.getPattern(),
+                                 PercentileDiscountPromotion::fromString);
     }
 
 

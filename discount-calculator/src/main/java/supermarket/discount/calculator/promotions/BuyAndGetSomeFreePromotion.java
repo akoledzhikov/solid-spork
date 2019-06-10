@@ -122,6 +122,10 @@ public class BuyAndGetSomeFreePromotion
                                                                            .equals(category))
                                                     .collect(Collectors.toSet());
         // generate all combinations of those items of order X = originalAmount
+        if (applicableItems.size() < originalAmount) {
+            return Collections.emptyList();
+        }
+        
         Set<Set<ShoppingCartItem>> combinations = Sets.combinations(applicableItems, originalAmount);
         List<PromotionMatch> result = combinations.stream()
                                                   .map(this::createMatch)
@@ -138,7 +142,8 @@ public class BuyAndGetSomeFreePromotion
         List<ShoppingCartItem> items = new ArrayList<ShoppingCartItem>(combination);
         items.sort(BuyAndGetSomeFreePromotion::compareItems);
         BigDecimal moneySaved = BigDecimal.ZERO;
-        for (int i = 0; i < newAmount; i++) {
+        int freeAmount = originalAmount - newAmount;
+        for (int i = 0; i < freeAmount; i++) {
             moneySaved = moneySaved.add(items.get(i).getCost());
         }
         

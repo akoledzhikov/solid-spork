@@ -3,6 +3,8 @@ package supermarket.discount.calculator.promotions;
 
 
 
+import java.math.BigDecimal;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +25,7 @@ public class PercentileDiscountPromotionTest
     {
         PercentileDiscountPromotion promotion = PercentileDiscountPromotion.fromString("@Pepsi@ discount 50%");
         Assert.assertEquals(Product.fromString("Pepsi"), promotion.getProduct());
-        Assert.assertEquals(50, promotion.getDiscountPercent());
+        Assert.assertEquals(new BigDecimal("50"), promotion.getDiscountPercent());
     }
 
 }
