@@ -60,8 +60,15 @@ public class ShoppingCartParserTest
         List<String> cartAsString = fileToList("src/test/resources/ShoppingCartParserTest/fractionalPepsi.cart");
         ShoppingCartParser.parse(cartAsString);
     }
-
-
+    
+    @Test
+    public void testSplitItems() throws IOException
+    {
+        List<String> cartAsString = fileToList("src/test/resources/ShoppingCartParserTest/splitItems.cart");
+        List<ShoppingCartItem> items = ShoppingCartParser.parse(cartAsString);
+        Assert.assertEquals(3, items.size());
+    }
+    
     private List<String> fileToList(String fileLocation)
         throws IOException
     {
