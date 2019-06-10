@@ -1,5 +1,5 @@
 #this is how you write a comment
-#3 @Coke@ for the price of 2
+#3 @Coke@ for the price of 2 -- not active now
 
-#3 #SOFT_DRINK# for the price of 2
-#SOFT_DRINK# discount 90%
+3 #SOFT_DRINK# for the price of 2
+@Coke@ discount 1%

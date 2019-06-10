@@ -52,7 +52,7 @@ public class PromotionsLoader
     {
         try (Stream<String> stream = Files.lines(Paths.get(promotionsFileLocation)))
         {
-            Set<Promotion> result = stream.filter(line -> !line.startsWith("#"))
+            Set<Promotion> result = stream.filter(line -> !line.isEmpty() && !line.startsWith("#"))
                                           .map(PromotionFactory::promotionFromString)
                                           .collect(Collectors.toSet());
             result = Collections.unmodifiableSet(result);

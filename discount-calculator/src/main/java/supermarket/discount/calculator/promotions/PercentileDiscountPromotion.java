@@ -2,6 +2,7 @@ package supermarket.discount.calculator.promotions;
 
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -19,6 +20,8 @@ import supermarket.discount.calculator.promotions.matcher.PromotionMatch;
 public class PercentileDiscountPromotion
     implements Promotion
 {
+    private static final BigDecimal ONE_HUNDRED = new BigDecimal("100");
+
     private static final Logger LOG = Logger.getLogger(PercentileDiscountPromotion.class);
 
     private static final String PATTERN = "(@(?<product>\\w+)@"
@@ -43,6 +46,7 @@ public class PercentileDiscountPromotion
         Category category = Category.fromString(m.group("category"));
         BigDecimal discountPercent = new BigDecimal(m.group("discount"));
         validateDiscountPercent(discountPercent);
+        discountPercent = discountPercent.divide(ONE_HUNDRED, 2, RoundingMode.DOWN);
         PercentileDiscountPromotion result = new PercentileDiscountPromotion(product,
                                                                              category,
                                                                              discountPercent);
@@ -109,7 +113,7 @@ public class PercentileDiscountPromotion
 
     private PromotionMatch toMatch(ShoppingCartItem item)
     {
-        BigDecimal moneySaved = item.getCost().multiply(discountPercent);
+        BigDecimal moneySaved = item.getCost().multiply(discountPercent).stripTrailingZeros();
         return new PromotionMatch(this, moneySaved, Collections.singletonList(item));
     }
 

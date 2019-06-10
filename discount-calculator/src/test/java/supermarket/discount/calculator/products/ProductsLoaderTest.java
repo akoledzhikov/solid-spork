@@ -23,4 +23,9 @@ public class ProductsLoaderTest
         ProductsLoader pl = new ProductsLoader("src/test/resources/PercentileDiscountPromotionTest/malformedPepsi.prod");
         pl.getProduct("Pepsi");
     }
+    
+    @Test
+    public void testEmptyLineInPromotionsFile() {
+        // TODO write me
+    }
 }
